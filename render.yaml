@@ -2,27 +2,20 @@ services:
   # The Spring Boot Backend Service
   - type: web
     name: family-finance-backend
-    env: spring
+    # 'runtime: java' is more explicit than 'spring', and Render detects it.
+    runtime: java
     plan: free
     rootDir: ./backend
     buildCommand: "./gradlew bootJar"
     startCommand: "java -jar build/libs/*.jar"
     envVars:
+      # Render provides a single connection string that includes the user/password.
+      # Spring Boot automatically parses this.
       - key: SPRING_DATASOURCE_URL
         fromService:
           type: pserv
           name: family-finance-db
           property: connectionString
-      - key: SPRING_DATASOURCE_USERNAME
-        fromService:
-          type: pserv
-          name: family-finance-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromService:
-          type: pserv
-          name: family-finance-db
-          property: password
       - key: SPRING_REDIS_HOST
         fromService:
           type: redis
@@ -37,32 +30,38 @@ services:
         value: prod
 
   # The React Frontend Static Site
-  - type: web
+  - type: static
     name: family-finance-frontend
-    env: static
     plan: free
     rootDir: ./
     buildCommand: "npm install && npm run build"
+    # The 'dist' directory is the output from the vite build
     staticPublishPath: ./dist
+    # This section is crucial for client-side routing in React
     routes:
       - type: rewrite
         source: "/*"
         destination: "/index.html"
     envVars:
       - key: VITE_API_URL
+        # This correctly references the public URL of your backend service
         fromService:
           type: web
           name: family-finance-backend
           property: url
 
   # The PostgreSQL Database
+  # 'pserv' is the correct type for a Render-managed PostgreSQL service
   - type: pserv
     name: family-finance-db
-    env: postgres # This specifies the database type
     plan: free
-    # By removing postgresMajorVersion, we let Render choose the best supported version
 
   # The Redis Cache
   - type: redis
     name: family-finance-cache
     plan: free
+    # Free tier Redis requires an explicit IP allow list.
+    # '0.0.0.0/0' allows access from any service within Render.
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: "Allow all"
