@@ -42,4 +42,12 @@ Create a modular, production-ready full-stack project with the following require
 
 ---
 
+**Deployment & Clean Repo Note:**
+
+- This project uses automated scripts to build and copy the frontend to the `docs` folder for GitHub Pages.
+- The `.gitignore` ensures only essential files are tracked for a minimal, production-ready repository.
+- See the README and docs for step-by-step deployment and hygiene instructions.
+
+---
+
 **Replicate this prompt to generate a similar project anytime.**

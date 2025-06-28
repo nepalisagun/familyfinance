@@ -1,8 +1,8 @@
 # Monthly Savings App
 
-A modular, production-grade full-stack application for managing family and business finances.
+## Overview
 
-## Tech Stack
+A modular, production-grade full-stack application for managing family and business finances. Built with:
 
 - **Frontend**: React (TypeScript, Vite, MUI, React Query, Recharts, Toastify, Formik, Yup, PWA, i18n)
 - **Backend**: Spring Boot (JDK 21, Gradle, Clean Architecture, SOLID, API versioning, OpenAPI/Swagger, advanced validation, audit logging, distributed tracing, health checks)
@@ -11,6 +11,8 @@ A modular, production-grade full-stack application for managing family and busin
 - **Observability**: Distributed logging, Prometheus, Grafana, Spring Boot Actuator, OpenTelemetry, Resilience4j
 - **Orchestration**: Docker Compose (unique ports, persistent storage, Portainer, Docker secrets)
 - **Testing**: Unit and integration tests (Testcontainers)
+
+---
 
 ## Features
 
@@ -24,34 +26,50 @@ A modular, production-grade full-stack application for managing family and busin
 - PWA support, i18n, accessibility, dark/light mode
 - One-command startup with Docker Compose
 
-## Quick Start
-
-1. Clone the repository and open this folder in VS Code.
-2. Run `docker compose up --build` to start all services (frontend, backend, database, Redis, Grafana, Prometheus, Portainer).
-3. Access the frontend at `http://localhost:3100` (or the unique port specified in `docker-compose.yml`).
-4. Access the backend API at `http://localhost:3200/api/v1/records` (or the unique port specified).
-5. Access Portainer at `http://localhost:9000`.
-6. Access Grafana at `http://localhost:3400` and Prometheus at `http://localhost:3500`.
+---
 
 ## Architecture
 
-- Follows Clean Architecture and SOLID principles.
-- Backend and frontend are fully decoupled and communicate via REST.
-- PostgreSQL and Redis data are persisted via Docker volumes.
-- Observability, resilience, and distributed tracing are built-in.
-- See `docs/architecture.md` and `docs/architecture.png.md` for diagrams.
+![Architecture Diagram](architecture.png)
 
-## Development
+**Diagram Description:**
 
-- Frontend: `cd` into the root and use Vite scripts (`npm run dev`, `npm run build`).
-- Backend: `cd backend` and use Gradle (`./gradlew bootRun`).
-- Run tests: Backend uses JUnit/Testcontainers, frontend uses Jest/React Testing Library.
+- **Frontend**: React app communicates with backend via REST API
+- **Backend**: Spring Boot REST API, modular services, repository, and exception layers
+- **Database**: PostgreSQL, persistent Docker volume
+- **Cache**: Redis, persistent Docker volume
+- **Observability**: Prometheus scrapes backend metrics, Grafana dashboards, Portainer for Docker management
+- **Docker Compose**: Orchestrates all services with unique ports and secrets
 
-## Customization
+---
 
-- Update ports and credentials in `docker-compose.yml` and secrets as needed.
-- Add your own modules/services following the modular structure.
-- Extend frontend with new UI features, charts, and PWA enhancements.
+## Quick Start
+
+1. **Clone the repository**
+   ```sh
+   git clone <your-repo-url>
+   cd MonthlySavings/App
+   ```
+2. **Start all services**
+   ```sh
+   docker compose up --build
+   ```
+3. **Access the app:**
+   - Frontend: [http://localhost:3100](http://localhost:3100)
+   - Backend API: [http://localhost:3200/api/v1/records](http://localhost:3200/api/v1/records)
+   - Portainer: [http://localhost:9000](http://localhost:9000)
+   - Grafana: [http://localhost:3400](http://localhost:3400)
+   - Prometheus: [http://localhost:3500](http://localhost:3500)
+
+---
+
+## Testing & Extensibility
+
+- Backend: JUnit, Testcontainers for integration tests
+- Frontend: Jest, React Testing Library
+- Easily extend with new modules, services, and UI features
+
+---
 
 ## Onboarding Guide (For Non-Technical Users)
 
@@ -153,41 +171,31 @@ Welcome to the Monthly Savings App! This guide will help you get started, even i
 
 ---
 
-For more details, see the `docs/` folder and `.github/copilot-instructions.md` file.
+## Deployment (GitHub Pages)
 
-## Deployment & GitHub Pages
+To deploy the frontend as a static site:
 
-To deploy the frontend as a static site (e.g., for GitHub Pages):
+1. Run `npm run deploy` to build and copy the frontend to the `docs` folder.
+2. Commit and push your changes to GitHub.
+3. In your repository settings, set GitHub Pages to use the `main` branch and `/docs` folder.
+4. Access your app at `https://<your-username>.github.io/<repo-name>/`.
 
-1. Run `npm run deploy` to build the frontend and copy the output to the `docs` folder.
-2. Commit and push your changes:
-   ```powershell
-   git add .
-   git commit -m "Deploy: build and copy frontend to docs for GitHub Pages"
-   git push origin main
-   ```
-3. In your GitHub repository settings, go to the **Pages** section and set the source to the `main` branch and `/docs` folder.
-4. After a few minutes, your app will be available at `https://<your-username>.github.io/<repo-name>/`.
+---
 
-## Repository Hygiene & .gitignore
+## Repository Hygiene
 
-- The `.gitignore` file is configured to exclude all unnecessary files, such as build output, dependencies, and custom components/pages not meant for production.
-- Only essential files and `.gitkeep` placeholders are tracked for a clean, minimal repository.
+- The `.gitignore` file ensures only essential files are tracked.
+- All custom components/pages/theme/i18n are ignored unless needed for production.
+- Use `.gitkeep` to keep empty folders in git.
 
-## Step-by-step Git Workflow
+---
 
-1. Make your changes or add new features.
-2. Stage your changes:
-   ```powershell
-   git add .
-   ```
-3. Commit your changes:
-   ```powershell
-   git commit -m "Describe your change"
-   ```
-4. Push to GitHub:
-   ```powershell
-   git push origin main
-   ```
+## Clean Commit Process
 
-For more, see the `docs/` folder and onboarding/troubleshooting guides below.
+1. Stage changes: `git add .`
+2. Commit: `git commit -m "Describe your change"`
+3. Push: `git push origin main`
+
+---
+
+For onboarding, troubleshooting, and more, see the guides above and in the main README.
