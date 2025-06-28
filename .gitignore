@@ -1,0 +1,44 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore generated and temporary files
+.env
+.env.*
+coverage/
+.DS_Store
+*.tgz
+*.bak
+*.tmp
+*.cache
+
+# Ignore all custom components and pages (reset to minimal)
+src/components/*
+src/pages/*
+src/theme/*
+src/i18n/*
+!src/components/.gitkeep
+!src/pages/.gitkeep
+!src/theme/.gitkeep
+!src/i18n/.gitkeep
