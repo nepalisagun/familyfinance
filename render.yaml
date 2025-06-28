@@ -4,7 +4,6 @@ services:
     name: family-finance-backend
     env: spring
     plan: free
-    # Specifies that the backend is in the 'backend' subdirectory
     rootDir: ./backend
     buildCommand: "./gradlew bootJar"
     startCommand: "java -jar build/libs/*.jar"
@@ -42,19 +41,15 @@ services:
     name: family-finance-frontend
     env: static
     plan: free
-    # Specifies that the frontend is in the root directory
     rootDir: ./
     buildCommand: "npm install && npm run build"
-    # The 'dist' directory is the output from the vite build
     staticPublishPath: ./dist
-    # ADD THIS SECTION TO FIX CLIENT-SIDE ROUTING
     routes:
       - type: rewrite
         source: "/*"
         destination: "/index.html"
     envVars:
       - key: VITE_API_URL
-        # This will be the public URL of your backend service
         fromService:
           type: web
           name: family-finance-backend
@@ -63,13 +58,11 @@ services:
   # The PostgreSQL Database
   - type: pserv
     name: family-finance-db
+    env: postgres # This specifies the database type
     plan: free
-    # SPECIFY YOUR POSTGRES VERSION
-    postgresMajorVersion: 16
+    # By removing postgresMajorVersion, we let Render choose the best supported version
 
   # The Redis Cache
   - type: redis
     name: family-finance-cache
     plan: free
-    # ipAllowList should be empty for free tier or removed
-    # ipAllowList: [] # This is optional, can be removed
