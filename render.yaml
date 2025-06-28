@@ -1,0 +1,75 @@
+services:
+  # The Spring Boot Backend Service
+  - type: web
+    name: family-finance-backend
+    env: spring
+    plan: free
+    # Specifies that the backend is in the 'backend' subdirectory
+    rootDir: ./backend
+    buildCommand: "./gradlew bootJar"
+    startCommand: "java -jar build/libs/*.jar"
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromService:
+          type: pserv
+          name: family-finance-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromService:
+          type: pserv
+          name: family-finance-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromService:
+          type: pserv
+          name: family-finance-db
+          property: password
+      - key: SPRING_REDIS_HOST
+        fromService:
+          type: redis
+          name: family-finance-cache
+          property: host
+      - key: SPRING_REDIS_PORT
+        fromService:
+          type: redis
+          name: family-finance-cache
+          property: port
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+  # The React Frontend Static Site
+  - type: web
+    name: family-finance-frontend
+    env: static
+    plan: free
+    # Specifies that the frontend is in the root directory
+    rootDir: ./
+    buildCommand: "npm install && npm run build"
+    # The 'dist' directory is the output from the vite build
+    staticPublishPath: ./dist
+    # ADD THIS SECTION TO FIX CLIENT-SIDE ROUTING
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"
+    envVars:
+      - key: VITE_API_URL
+        # This will be the public URL of your backend service
+        fromService:
+          type: web
+          name: family-finance-backend
+          property: url
+
+  # The PostgreSQL Database
+  - type: pserv
+    name: family-finance-db
+    plan: free
+    # SPECIFY YOUR POSTGRES VERSION
+    postgresMajorVersion: 16
+
+  # The Redis Cache
+  - type: redis
+    name: family-finance-cache
+    plan: free
+    # ipAllowList should be empty for free tier or removed
+    # ipAllowList: [] # This is optional, can be removed
