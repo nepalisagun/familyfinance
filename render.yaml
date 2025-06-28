@@ -2,15 +2,12 @@ services:
   # The Spring Boot Backend Service
   - type: web
     name: family-finance-backend
-    # 'runtime: java' is more explicit than 'spring', and Render detects it.
     runtime: java
     plan: free
     rootDir: ./backend
     buildCommand: "./gradlew bootJar"
     startCommand: "java -jar build/libs/*.jar"
     envVars:
-      # Render provides a single connection string that includes the user/password.
-      # Spring Boot automatically parses this.
       - key: SPRING_DATASOURCE_URL
         fromService:
           type: pserv
@@ -30,12 +27,13 @@ services:
         value: prod
 
   # The React Frontend Static Site
-  - type: static
+  # Static sites are a 'web' service with a 'staticPublishPath'
+  - type: web
     name: family-finance-frontend
+    runtime: static # Use the 'static' runtime
     plan: free
     rootDir: ./
     buildCommand: "npm install && npm run build"
-    # The 'dist' directory is the output from the vite build
     staticPublishPath: ./dist
     # This section is crucial for client-side routing in React
     routes:
@@ -44,14 +42,12 @@ services:
         destination: "/index.html"
     envVars:
       - key: VITE_API_URL
-        # This correctly references the public URL of your backend service
         fromService:
           type: web
           name: family-finance-backend
           property: url
 
   # The PostgreSQL Database
-  # 'pserv' is the correct type for a Render-managed PostgreSQL service
   - type: pserv
     name: family-finance-db
     plan: free
@@ -60,8 +56,5 @@ services:
   - type: redis
     name: family-finance-cache
     plan: free
-    # Free tier Redis requires an explicit IP allow list.
-    # '0.0.0.0/0' allows access from any service within Render.
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: "Allow all"
+    # Allow all Render services to connect to this Redis instance
+    ipAllowList: []
