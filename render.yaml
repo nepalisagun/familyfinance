@@ -1,14 +1,16 @@
 services:
-  # The Spring Boot Backend Service
+  # 1. The Spring Boot Backend Service
   - type: web
     name: family-finance-backend
     runtime: java
     plan: free
     rootDir: ./backend
     buildCommand: "./gradlew bootJar"
-    startCommand: "java -jar build/libs/*.jar"
+    startCommand: "java -Dserver.port=10000 -jar build/libs/*.jar"
+    healthCheckPath: /actuator/health
     envVars:
-      - key: SPRING_DATASOURCE_URL
+      # Render provides a single DATABASE_URL that Spring Boot automatically detects
+      - key: DATABASE_URL
         fromService:
           type: pserv
           name: family-finance-db
@@ -23,19 +25,14 @@ services:
           type: redis
           name: family-finance-cache
           property: port
-      - key: SPRING_PROFILES_ACTIVE
-        value: prod
 
-  # The React Frontend Static Site
-  # Static sites are a 'web' service with a 'staticPublishPath'
-  - type: web
+  # 2. The React Frontend Static Site
+  - type: static
     name: family-finance-frontend
-    runtime: static # Use the 'static' runtime
     plan: free
     rootDir: ./
     buildCommand: "npm install && npm run build"
-    staticPublishPath: ./dist
-    # This section is crucial for client-side routing in React
+    publishPath: ./dist
     routes:
       - type: rewrite
         source: "/*"
@@ -47,14 +44,13 @@ services:
           name: family-finance-backend
           property: url
 
-  # The PostgreSQL Database
+  # 3. The PostgreSQL Database
   - type: pserv
     name: family-finance-db
     plan: free
 
-  # The Redis Cache
+  # 4. The Redis Cache
   - type: redis
     name: family-finance-cache
     plan: free
-    # Allow all Render services to connect to this Redis instance
-    ipAllowList: []
+    ipAllowList: [] # Allows access from your other Render services
